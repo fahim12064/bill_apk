@@ -12,17 +12,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies and build APK
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y \
             python3-pip python3-setuptools git zip unzip openjdk-17-jdk libtinfo6 \
             autoconf automake libtool pkg-config build-essential
 
+      - name: Install Python packages
+        run: |
           pip install --upgrade pip
           pip install buildozer cython
 
-          buildozer android debug
+      - name: Accept Android SDK Licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+
+      - name: Build APK
+        run: buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
