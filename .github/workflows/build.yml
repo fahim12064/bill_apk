@@ -15,9 +15,13 @@ jobs:
       - name: Install dependencies and build APK
         run: |
           sudo apt update
-          sudo apt install -y python3-pip python3-setuptools git zip unzip openjdk-17-jdk libtinfo6
+          sudo apt install -y \
+            python3-pip python3-setuptools git zip unzip openjdk-17-jdk libtinfo6 \
+            autoconf automake libtool pkg-config build-essential
+
           pip install --upgrade pip
           pip install buildozer cython
+
           buildozer android debug
 
       - name: Upload APK
