@@ -19,6 +19,20 @@ jobs:
             python3-pip python3-setuptools git zip unzip openjdk-17-jdk libtinfo6 \
             autoconf automake libtool pkg-config build-essential
 
+      - name: Add gas-preprocessor (SIMD Fix)
+        run: |
+          wget https://github.com/libav/gas-preprocessor/raw/master/gas-preprocessor.pl
+          chmod +x gas-preprocessor.pl
+          sudo mv gas-preprocessor.pl /usr/local/bin/
+
+      - name: Set Android NDK and SDK paths
+        run: |
+          echo "ANDROIDNDK=/usr/local/lib/android/sdk/ndk/25b" >> $GITHUB_ENV
+          echo "ANDROIDSDK=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+
+      - name: Set TERM to dumb
+        run: echo "TERM=dumb" >> $GITHUB_ENV
+
       - name: Install Python packages
         run: |
           pip install --upgrade pip
