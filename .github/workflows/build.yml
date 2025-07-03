@@ -29,6 +29,7 @@ jobs:
         run: |
           echo "ANDROIDNDK=/usr/local/lib/android/sdk/ndk/25b" >> $GITHUB_ENV
           echo "ANDROIDSDK=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          echo "PATH=/usr/local/lib/android/sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
 
       - name: Set TERM to dumb
         run: echo "TERM=dumb" >> $GITHUB_ENV
@@ -39,7 +40,7 @@ jobs:
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
           unzip commandlinetools-linux-9477386_latest.zip -d /usr/local/lib/android/sdk/cmdline-tools
           mv /usr/local/lib/android/sdk/cmdline-tools/cmdline-tools /usr/local/lib/android/sdk/cmdline-tools/latest
-          echo "y" | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0"
+          /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0"
 
       - name: Install Python packages
         run: |
