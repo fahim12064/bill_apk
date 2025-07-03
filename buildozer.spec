@@ -1,60 +1,24 @@
-name: Build Kivy APK
-
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            python3-pip python3-setuptools git zip unzip openjdk-17-jdk libtinfo6 \
-            autoconf automake libtool pkg-config build-essential
-
-      - name: Add gas-preprocessor (SIMD Fix)
-        run: |
-          wget https://github.com/libav/gas-preprocessor/raw/master/gas-preprocessor.pl
-          chmod +x gas-preprocessor.pl
-          sudo mv gas-preprocessor.pl /usr/local/bin/
-
-      - name: Set Android NDK and SDK paths
-        run: |
-          echo "ANDROIDNDK=/usr/local/lib/android/sdk/ndk/25b" >> $GITHUB_ENV
-          echo "ANDROIDSDK=/usr/local/lib/android/sdk" >> $GITHUB_ENV
-          echo "PATH=/usr/local/lib/android/sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
-
-      - name: Set TERM to dumb
-        run: echo "TERM=dumb" >> $GITHUB_ENV
-
-      - name: Install Android SDK cmdline-tools
-        run: |
-          mkdir -p /usr/local/lib/android/sdk/cmdline-tools
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip commandlinetools-linux-9477386_latest.zip -d /usr/local/lib/android/sdk/cmdline-tools
-          mv /usr/local/lib/android/sdk/cmdline-tools/cmdline-tools /usr/local/lib/android/sdk/cmdline-tools/latest
-          echo "y" | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0"
-
-      - name: Install Python packages
-        run: |
-          pip install --upgrade pip
-          pip install buildozer cython
-
-      - name: Accept Android SDK Licenses
-        run: yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-
-      - name: Build APK
-        run: buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: BillingApp
-          path: ./bin/*.apk
+[app]
+title = Bill App
+package.name = billapp
+package.domain = org.fatech
+source.dir = .
+source.include_exts = py,png,jpg,kv,atlas
+version = 0.1
+requirements = python3,kivy==2.3.1,kivymd,materialyoucolor,pillow,cython
+requirements.source.kivy = https://github.com/kivy/kivy/archive/2.3.1.zip
+requirements.source.kivymd = https://github.com/kivymd/KivyMD/archive/1.1.0.zip
+requirements.source.libffi = https://github.com/libffi/libffi/archive/v3.4.6.zip
+orientation = portrait
+fullscreen = 0
+android.permissions = android.permission.WRITE_EXTERNAL_STORAGE;maxSdkVersion=28,android.permission.READ_EXTERNAL_STORAGE
+android.accept_sdk_license = True
+android.archs = arm64-v8a,armeabi-v7a
+android.ndk = 25b
+android.ndk_path = /usr/local/lib/android/sdk/ndk/25b
+android.sdk_path = /usr/local/lib/android/sdk
+android.api = 31
+android.minapi = 21
+android.logcat_filters = *:S python:D
+log_level = 2
+warn_on_root = 1
